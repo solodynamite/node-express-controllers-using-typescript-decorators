@@ -90,7 +90,7 @@ export class TestController {
 
 # Write your own Controller classes
 
-...with this source code at `/src/controllers` in Typescript (using the same decorators like HomeController in the source code) to make it work.
+...with this source code at `/controllers` in Typescript (using the same decorators like HomeController in the source code) to make it work.
 
 
 # Getting Started
@@ -147,7 +147,7 @@ http://localhost:3000/say-hello/johnmarsha?id=123 would display a message, 'Hell
 
 # Note
 
-The entry point of your build is at `/src/server.ts` that gets transpiled to and executed from `/dist/server.js`.
+The entry point of your build is at `/server.ts` that gets transpiled to and executed from `/dist/server.js`.
 
 Your coding work should always be written in the .ts files outside the `/dist` folder.
 
