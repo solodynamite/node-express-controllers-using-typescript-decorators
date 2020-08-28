@@ -1,0 +1,27 @@
+{
+  "name": "reaper",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node 'dist/server.js'",
+    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "test-middleware": "mocha -r ts-node/register middleware/tests/**/*.spec.ts"
+  },
+  "keywords": [],
+  "author": "https://github.com/solodynamite",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/express": "^4.17.7",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^14.0.23",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
