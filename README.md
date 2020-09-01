@@ -115,7 +115,7 @@ code .
 The recommended way is to open Terminal outside Visual Studio Code (preferably Powershell in Windows) and execute:
 
 ```
-npm i -g typescript // just run this one once - a one-time global install of typescript in your machine
+npm i -g typescript // Just run this one once if you haven't yet.  This is a one-time global install of typescript in your machine
 tsc -w
 ```
 
