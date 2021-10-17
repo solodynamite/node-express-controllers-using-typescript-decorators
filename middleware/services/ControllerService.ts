@@ -94,9 +94,12 @@ export class ControllerService {
 
                             response.send(result)
                         }
-                        catch (ex:any) {
+                        catch (err) {
 
-                            response.status(500).send(ex.message)
+                            if(err instanceof Error) {
+
+                                response.status(500).send(err.message)
+                            }
                         }
                     },
 
