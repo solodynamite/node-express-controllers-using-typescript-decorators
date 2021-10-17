@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node 'dist/server.js'",
+    "start": "node 'dist/src/server.js'",
     "test": "mocha -r ts-node/register src/tests/**/*.spec.ts",
     "test-middleware": "mocha -r ts-node/register middleware/tests/**/*.spec.ts"
   },

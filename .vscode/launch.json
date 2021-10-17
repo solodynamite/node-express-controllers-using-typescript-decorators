@@ -6,7 +6,7 @@
   "configurations": [
     {
       "name": "Server",
-      "program": "${workspaceFolder}/server.ts",
+      "program": "${workspaceFolder}/src/server.ts",
       "request": "launch",
       "skipFiles": [
         "<node_internals>/**"

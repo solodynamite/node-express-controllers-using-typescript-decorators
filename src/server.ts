@@ -1,4 +1,4 @@
-import { ExpressService } from './middleware/services/ExpressService'
+import { ExpressService } from '../middleware/services/ExpressService'
 
 const port = process.env.PORT || 3000
 
