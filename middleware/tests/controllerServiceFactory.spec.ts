@@ -190,9 +190,9 @@ describe('controllerServiceFactory', () => {
 
             }).getEndpoints("HelloWorldController")
 
-        delete actual[0].fn
+        // delete actual[0].fn
 
-        delete actual[1].fn
+        // delete actual[1].fn
 
         expect(actual).to.eql(expected)
     })

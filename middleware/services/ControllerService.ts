@@ -94,7 +94,7 @@ export class ControllerService {
 
                             response.send(result)
                         }
-                        catch (ex) {
+                        catch (ex:any) {
 
                             response.status(500).send(ex.message)
                         }
