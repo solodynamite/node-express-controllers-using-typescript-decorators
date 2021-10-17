@@ -1,4 +1,4 @@
-import { controller, get, post } from "../middleware/decorators"
+import { controller, get, post } from "../../middleware/decorators"
 
 function sayHelloWorld() {
 

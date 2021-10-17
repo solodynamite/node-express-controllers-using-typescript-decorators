@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "node 'dist/server.js'",
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "test": "mocha -r ts-node/register src/tests/**/*.spec.ts",
     "test-middleware": "mocha -r ts-node/register middleware/tests/**/*.spec.ts"
   },
   "keywords": [],
