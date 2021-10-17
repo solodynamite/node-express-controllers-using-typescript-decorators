@@ -147,7 +147,7 @@ http://localhost:3000/say-hello/johnmarsha?id=123 would display a message, 'Hell
 
 # Note
 
-The entry point of your build is at `/src/server.ts` that gets transpiled to and executed from `/dist/server.js`.
+The entry point of your build is at `/src/server.ts` that gets transpiled to and executed from `/dist/src/server.js`.
 
 Your coding work should always be written in the .ts files outside the `/dist` folder.
 
