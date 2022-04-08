@@ -1,4 +1,5 @@
 import { controller, get, post } from "../middleware/decorators"
+import RuleViolationException from '../types/RuleViolationException'
 
 @controller()
 export class HomeController {
@@ -6,7 +7,11 @@ export class HomeController {
     @get()
     async home() {
 
-        return { message: 'Hello world!'}
+        throw new RuleViolationException ([
+
+             { fieldName: 'firstName', message: 'Required'}
+        ])
+        // return { message: 'Hello world!'}
     }
 
     @get('/say-hello/:firstName')

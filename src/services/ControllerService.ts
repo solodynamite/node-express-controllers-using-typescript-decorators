@@ -1,4 +1,5 @@
 import { toSafePath, cleanPath } from './Utils'
+import RuleViolationException from '../types/RuleViolationException'
 
 class ControllerItem {
 
@@ -96,10 +97,12 @@ export class ControllerService {
                         }
                         catch (err) {
 
-                            if(err instanceof Error) {
+                            if (err instanceof RuleViolationException) {
 
-                                response.status(500).send(err.message)
+                                return response.status(422).send({ violationInfos: err.violationInfos })
                             }
+
+                            response.status(500).send({ message: (<any>err).message })
                         }
                     },
 
