@@ -1,4 +1,4 @@
-import { controllerServiceFactory } from "./services/ControllerService";
+import { controllerServiceFactory } from "../services/ControllerService";
 import { ExpressParams } from "./params";
 
 const ctrlSvcFactory = controllerServiceFactory()

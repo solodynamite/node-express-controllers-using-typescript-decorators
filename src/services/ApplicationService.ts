@@ -2,12 +2,13 @@ import fs from 'fs'
 import path from 'path'
 import { controllerServiceFactory } from './ControllerService';
 import express from 'express'
+import EventService from './EventService';
 
-export module ExpressService {
+export module ApplicationService {
     
     export function start(port: string | number, sourceDir: string) {
         
-        let _express: any;
+        let _server: any;
 
         function recurseAndRegisterControllers(dir: string): void {
 
@@ -40,24 +41,25 @@ export module ExpressService {
 
                 for (let { path, fn, method } of controllerServiceFactory().getEndpoints(ctlName)) {
 
-                    _express[method](path, fn);
+                    _server[method](path, fn);
                 }
             }
         }
-
         
-        _express = express()
+        _server = express()
         
-        _express.use(express.json())
+        _server.use(express.json())
         
         recurseAndRegisterControllers(sourceDir)
 
-        _express.listen(port, () => {
+        _server.listen(port, () => {
+
+            EventService.publish('server-init')
 
             console.log(`server running at port ${port}`)
 
         })
 
-        return _express
+        return _server
     }
 }

@@ -1,4 +1,4 @@
-import { cleanPath, toSafePath } from '../services/Utils'
+import { cleanPath, toSafePath } from '../../services/Utils'
 import { expect } from 'chai'
 import 'mocha'
 

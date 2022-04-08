@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import 'mocha'
-import { controllerServiceFactory } from '../services/ControllerService'
+import { controllerServiceFactory } from '../../services/ControllerService'
 
 describe('controllerServiceFactory', () => {
 

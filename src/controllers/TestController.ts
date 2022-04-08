@@ -1,5 +1,5 @@
-import { controller, get } from "../../middleware/decorators";
-import { ExpressParams } from "../../middleware/params";
+import { controller, get } from "../middleware/decorators";
+import { ExpressParams } from "../middleware/params";
 
 @controller("/test")
 export class TestController {

@@ -1,12 +1,4 @@
-import { controller, get, post } from "../../middleware/decorators"
-
-function sayHelloWorld() {
-
-    return new Promise((resolve, reject) => {
-
-        resolve('Hello world!')
-    })
-}
+import { controller, get, post } from "../middleware/decorators"
 
 @controller()
 export class HomeController {
@@ -14,7 +6,7 @@ export class HomeController {
     @get()
     async home() {
 
-        return await sayHelloWorld()
+        return { message: 'Hello world!'}
     }
 
     @get('/say-hello/:firstName')

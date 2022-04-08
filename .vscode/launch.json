@@ -11,6 +11,10 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "envFile": "${workspaceFolder}//.env.dev",
       "type": "pwa-node"
     }
   ]
