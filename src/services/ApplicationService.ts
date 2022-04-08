@@ -3,6 +3,9 @@ import path from 'path'
 import { controllerServiceFactory } from './ControllerService';
 import express from 'express'
 import EventService from './EventService';
+import LogService from './LogService'
+
+const { NODE_ENV} = process.env
 
 export module ApplicationService {
     
@@ -49,6 +52,11 @@ export module ApplicationService {
         _server = express()
         
         _server.use(express.json())
+
+        if (NODE_ENV === 'development') {
+
+            _server.use(LogService);
+        }
         
         recurseAndRegisterControllers(sourceDir)
 

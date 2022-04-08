@@ -7,11 +7,6 @@ const port = process.env.PORT || 3000
 
 const server = ApplicationService.start(port, './dist/controllers');
 
-// if (NODE_ENV === 'development') {
-
-//     server.use(require('./middleware/renderRequestInfo'));
-// }
-
 server
 
     .use((request: any, response: any, next: any) => {
