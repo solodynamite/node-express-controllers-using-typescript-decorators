@@ -99,7 +99,7 @@ export class ControllerService {
 
                             if (err instanceof RuleViolationException) {
 
-                                return response.status(422).send({ violationInfos: err.violationInfos })
+                                return response.status(422).send({ violations: err.violationInfos })
                             }
 
                             response.status(500).send({ message: (<any>err).message })

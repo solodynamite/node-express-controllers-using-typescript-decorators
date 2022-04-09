@@ -11,10 +11,6 @@ export default class RuleViolationException {
 
     constructor(violationInfos: Array<RuleViolationInfo>) {
 
-        // super(JSON.stringify(violationInfos))
-
         this.violationInfos = violationInfos
-
-        // Object.setPrototypeOf(this, RuleViolationException.prototype)
     }
 }
