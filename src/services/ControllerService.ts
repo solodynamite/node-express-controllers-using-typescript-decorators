@@ -1,16 +1,17 @@
 import { toSafePath, cleanPath } from './Utils'
+import { Request, Response, NextFunction } from 'express'
 import RuleViolationException from '../types/RuleViolationException'
 
 class ControllerItem {
 
     public path?: string
-    public methodPaths: ControllerMethodPath[] = []
+    public httpMethodPaths: ControllerHttpMethodPath[] = []
 }
 
-class ControllerMethodPath {
+class ControllerHttpMethodPath {
 
     public path?: string
-    public method!: string
+    public httpMethod!: string
     public functionName!: string
     public fn!: Function
 }
@@ -18,7 +19,7 @@ class ControllerMethodPath {
 class PathMethodToControllerParams {
 
     public className!: string
-    public method!: string
+    public httpMethod!: string
     public functionName!: string
     public func!: Function
     public path?: string
@@ -52,40 +53,54 @@ export class ControllerService {
         this.store = store
     }
 
-    resolveControllerItem(className: string, path: string = '/') {
+    registerController(className: string, path: string = '/') {
 
         path = cleanPath(path)
 
         if (!this.store[className]) {
 
-            return this.store[className] = { path, methodPaths: [] }
+            return this.store[className] = { path, httpMethodPaths: [] }
         }
 
         this.store[className].path = path;
     }
 
-    resolvePathMethodToController({ className, method, functionName, func: fn, path = '/' }: PathMethodToControllerParams) {
+    registerRulesToController({ className, httpMethod, functionName, func: fn, path = '/' }: PathMethodToControllerParams) {
 
-        this.resolveControllerItem(className, path)
+        this.registerController(className, path)
 
-        this.store[className].methodPaths.push({ path, method, functionName, fn: fn })
+        this.registerPathMethodToController({ className, httpMethod, functionName, func: fn, path })
+
+        const targetMethod = this.store[className].httpMethodPaths.find(i => i.path === path && i.httpMethod === httpMethod)
+
+        debugger
+    }
+
+    registerPathMethodToController({ className, httpMethod, functionName, func: fn, path = '/' }: PathMethodToControllerParams) {
+
+        this.registerController(className, path)
+
+        if (this.store[className].httpMethodPaths.some(i => i.path === path && i.httpMethod === httpMethod) === false) {
+
+            this.store[className].httpMethodPaths.push({ path, httpMethod, functionName, fn: fn })
+        }
     }
 
     private static getControllers(source: Array<[string, ControllerItem]>) {
 
         return source.map(entry => {
 
-            let { path, methodPaths } = entry[1]
+            let { path, httpMethodPaths } = entry[1]
 
-            const result = Object.values(methodPaths || []).map((item: any) => {
+            const result = Object.values(httpMethodPaths || []).map((item: any) => {
 
-                const { method, path: _path, fn } = item
+                const { httpMethod, path: _path, fn } = item
 
                 return {
 
                     path: toSafePath([path, _path]),
 
-                    fn: async ({ params, query, body }: any, response: any, next: any) => {
+                    fn: async ({ params, query, body }: Request, response: Response, next: NextFunction) => {
 
                         try {
 
@@ -106,7 +121,7 @@ export class ControllerService {
                         }
                     },
 
-                    method
+                    httpMethod
                 }
             })
 
@@ -114,7 +129,7 @@ export class ControllerService {
         })
     }
 
-    getEndpoints(controllerName: string): { path: string, fn: Function, method: string }[] {
+    getEndpoints(controllerName: string): { path: string, fn: Function, httpMethod: string }[] {
 
         let result: any = ControllerService.getControllers(Object.entries(this.store).filter(i => i[0] === controllerName))
 
@@ -148,11 +163,11 @@ export class ControllerService {
 
             const controllerItem = item[1]
 
-            const endpointInfos = controllerItem.methodPaths.map(({ path, method, functionName }) => { return { path, method, functionName } })
+            const endpointInfos = controllerItem.httpMethodPaths.map(({ path, httpMethod, functionName }) => { return { path, httpMethod, functionName } })
 
             endpointInfos.forEach(i => {
 
-                const _ = endpointInfos.filter(x => i.method === x.method && i.path === x.path && i.functionName !== x.functionName)[0]
+                const _ = endpointInfos.filter(x => i.httpMethod === x.httpMethod && i.path === x.path && i.functionName !== x.functionName)[0]
 
                 if (_)
 

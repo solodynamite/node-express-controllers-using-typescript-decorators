@@ -1,10 +1,12 @@
-import { controller, get, post } from "../middleware/decorators"
+import { controller, get, post, rules } from "../middleware/decorators"
+import repeat_passwords_must_match from "../services/rules/repeat_passwords_must_match"
 import RuleViolationException from '../types/RuleViolationException'
 
 @controller()
 export class HomeController {
 
     @get()
+    @rules(repeat_passwords_must_match)
     async home() {
 
         // throw new RuleViolationException ([

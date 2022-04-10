@@ -3,11 +3,18 @@ import { ExpressParams } from "./params";
 
 const ctrlSvcFactory = controllerServiceFactory()
 
-function resolve(method: string, target: any, functionName: string, funcDescriptor: PropertyDescriptor, path: string) {
+function registerPathMethodToControllerServiceFactory(httpMethod: string, target: any, functionName: string, funcDescriptor: PropertyDescriptor, path: string) {
 
     const { name: className } = target.constructor;
 
-    ctrlSvcFactory.resolvePathMethodToController({ className, method, functionName, func: funcDescriptor.value, path });
+    ctrlSvcFactory.registerPathMethodToController({ className, httpMethod, functionName, func: funcDescriptor.value, path });
+}
+
+function registerRulesToControllerServiceFactory(target: any, functionName: string, funcDescriptor: PropertyDescriptor, path: string) {
+
+    const { name: className } = target.constructor;
+
+    // ctrlSvcFactory.registerRulesToController({ className, functionName, func: funcDescriptor.value, path });
 }
 
 export function controller(path: string = '/') {
@@ -16,34 +23,39 @@ export function controller(path: string = '/') {
 
         const { name: className } = target;
 
-        ctrlSvcFactory.resolveControllerItem(className, path)
+        ctrlSvcFactory.registerController(className, path)
     };
 }
 
 export const get = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
 
-    resolve('get', target, functionName, funcDescriptor, path);
+    registerPathMethodToControllerServiceFactory('get', target, functionName, funcDescriptor, path);
 
     return funcDescriptor;
 }
 
 export const post = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
 
-    resolve('post', target, functionName, funcDescriptor, path);
+    registerPathMethodToControllerServiceFactory('post', target, functionName, funcDescriptor, path);
 
     return funcDescriptor;
 }
 
 export const put = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
 
-    resolve('put', target, functionName, funcDescriptor, path);
+    registerPathMethodToControllerServiceFactory('put', target, functionName, funcDescriptor, path);
 
     return funcDescriptor;
 }
 
 export const del = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
 
-    resolve('delete', target, functionName, funcDescriptor, path);
+    registerPathMethodToControllerServiceFactory('delete', target, functionName, funcDescriptor, path);
 
     return funcDescriptor;
+}
+
+export const rules = (...funcs: Function[]) => (target:any, functionName: string, funcDescriptor: PropertyDescriptor) => {
+
+    // registerRulesToControllerServiceFactory()
 }

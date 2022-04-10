@@ -12,7 +12,8 @@ server
 
     .use((request: Request, response: Response, next: NextFunction) => {
 
-        const headers: any = {
+        const headers: { [header:string]: string | undefined } = {
+
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE",
             "Access-Control-Allow-Headers": "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With, Content-Length, " + TOKEN_KEY,
@@ -22,7 +23,7 @@ server
 
         Object.keys(headers).forEach(key => {
 
-            const x = headers[key]
+            const x = <any>headers[key]
 
             response.setHeader(key, x)
         });
@@ -30,7 +31,7 @@ server
         if (request.method === 'OPTIONS') {
 
             response.status(204).setHeader('Content-Length', 0);
-            
+
             return response.end();
         }
         next();

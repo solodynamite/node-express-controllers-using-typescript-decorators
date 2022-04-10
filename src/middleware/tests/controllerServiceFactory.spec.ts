@@ -13,13 +13,13 @@ describe('controllerServiceFactory', () => {
                 "HomeController": {
 
                     path: '/',
-                    methodPaths: []
+                    httpMethodPaths: []
                 },
 
                 "TestController": {
 
                     path: '/',
-                    methodPaths: []
+                    httpMethodPaths: []
                 }
             }
 
@@ -33,13 +33,13 @@ describe('controllerServiceFactory', () => {
                 "HomeController": {
 
                     path: '/',
-                    methodPaths: []
+                    httpMethodPaths: []
                 },
 
                 "TestController": {
 
                     path: '/test',
-                    methodPaths: []
+                    httpMethodPaths: []
                 }
 
             }
@@ -54,16 +54,16 @@ describe('controllerServiceFactory', () => {
                 "HomeController": {
 
                     path: '/',
-                    methodPaths: [
+                    httpMethodPaths: [
                         {
                             path: '/',
-                            method: 'get',
+                            httpMethod: 'get',
                             functionName: 'home',
                             fn: () => { }
                         },
                         {
                             path: '/',
-                            method: 'get',
+                            httpMethod: 'get',
                             functionName: 'home2',
                             fn: () => { }
                         }
@@ -81,16 +81,16 @@ describe('controllerServiceFactory', () => {
                 "HomeController": {
 
                     path: '/',
-                    methodPaths: [
+                    httpMethodPaths: [
                         {
                             path: '/',
-                            method: 'get',
+                            httpMethod: 'get',
                             functionName: 'home',
                             fn: () => { }
                         },
                         {
                             path: '/say-hello/:name',
-                            method: 'get',
+                            httpMethod: 'get',
                             functionName: 'home2',
                             fn: () => { }
                         }
@@ -108,10 +108,10 @@ describe('controllerServiceFactory', () => {
 
             const actual = {
 
-                "TestController": { path: "/xxx", methodPaths: [] }
+                "TestController": { path: "/xxx", httpMethodPaths: [] }
             }
 
-            controllerServiceFactory(actual).resolveControllerItem('HomeController', '/home')
+            controllerServiceFactory(actual).registerController('HomeController', '/home')
 
             const expected = {
 
@@ -127,9 +127,9 @@ describe('controllerServiceFactory', () => {
 
         const actual: any = {}
 
-        controllerServiceFactory(actual).resolvePathMethodToController({
+        controllerServiceFactory(actual).registerPathMethodToController({
 
-            className: "HomeController", method: "get", functionName: "home", func: () => { }
+            className: "HomeController", httpMethod: "get", functionName: "home", func: () => { }
         })
 
         delete actual["HomeController"].methodPaths[0].fn
@@ -172,16 +172,16 @@ describe('controllerServiceFactory', () => {
 
                     path: "/test",
 
-                    methodPaths: [
+                    httpMethodPaths: [
                         {
                             path: "/xxx/:name",
-                            method: "get",
+                            httpMethod: "get",
                             functionName: 'home1',
                             fn: () => { }
                         },
                         {
                             path: "/open",
-                            method: "post",
+                            httpMethod: "post",
                             functionName: 'home2',
                             fn: () => { }
                         }
