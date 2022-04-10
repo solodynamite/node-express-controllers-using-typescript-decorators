@@ -7,11 +7,11 @@ export class HomeController {
     @get()
     async home() {
 
-        throw new RuleViolationException ([
+        // throw new RuleViolationException ([
 
-             { fieldName: 'firstName', message: 'Required'}
-        ])
-        // return { message: 'Hello world!'}
+        //      { fieldName: 'firstName', message: 'Required'}
+        // ])
+        return { message: 'Hello world!'}
     }
 
     @get('/say-hello/:firstName')

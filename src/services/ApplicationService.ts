@@ -4,13 +4,14 @@ import { controllerServiceFactory } from './ControllerService';
 import express from 'express'
 import EventService from './EventService';
 import LogService from './LogService'
+import enforceTokenAuth from '../middleware/enforceTokenAuth';
 
-const { NODE_ENV} = process.env
+const { NODE_ENV } = process.env
 
 export module ApplicationService {
-    
+
     export function start(port: string | number, sourceDir: string) {
-        
+
         let _server: any;
 
         function recurseAndRegisterControllers(dir: string): void {
@@ -48,16 +49,18 @@ export module ApplicationService {
                 }
             }
         }
-        
+
         _server = express()
-        
+
         _server.use(express.json())
 
         if (NODE_ENV === 'development') {
 
             _server.use(LogService);
         }
-        
+
+        _server.use(enforceTokenAuth)
+
         recurseAndRegisterControllers(sourceDir)
 
         _server.listen(port, () => {

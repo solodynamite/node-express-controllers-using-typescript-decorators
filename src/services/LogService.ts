@@ -1,6 +1,6 @@
 import morgan from 'morgan'
 
-const md = morgan((tokens: any, request: any, response: any) => {
+export default morgan((tokens: any, request: any, response: any) => {
 
     const i = [
 
@@ -20,5 +20,3 @@ const md = morgan((tokens: any, request: any, response: any) => {
 
     return i;
 })
-
-export default md

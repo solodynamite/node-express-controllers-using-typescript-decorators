@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { ApplicationService } from './services/ApplicationService'
 import EventService from './services/EventService'
+import { Request, Response, NextFunction } from 'express'
 
 const { NODE_ENV, TOKEN_KEY } = process.env
 const port = process.env.PORT || 3000
@@ -9,7 +10,7 @@ const server = ApplicationService.start(port, './dist/controllers');
 
 server
 
-    .use((request: any, response: any, next: any) => {
+    .use((request: Request, response: Response, next: NextFunction) => {
 
         const headers: any = {
             "Access-Control-Allow-Origin": "*",
@@ -28,8 +29,8 @@ server
 
         if (request.method === 'OPTIONS') {
 
-            response.status = 204;
-            response.setHeader('Content-Length', 0);
+            response.status(204).setHeader('Content-Length', 0);
+            
             return response.end();
         }
         next();
@@ -64,6 +65,8 @@ server
 
         response.status(status || 500).send(packet);
     })
+
+
 
 EventService.subscribe('server-init', () => {
 
