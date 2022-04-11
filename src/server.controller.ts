@@ -1,6 +1,7 @@
-import { toSafePath, cleanPath } from './Utils'
+import { toSafePath, cleanPath } from './services/Utils'
 import { Request, Response, NextFunction } from 'express'
-import RuleViolationException from '../types/RuleViolationException'
+import 'reflect-metadata'
+import RuleViolationException from './types/RuleViolationException'
 
 class ControllerInfo {
 
@@ -25,28 +26,26 @@ class PathMethodToControllerParams {
     public controller: any
 }
 
-export interface IController { }
+let factory: ControllerServer;
 
-let factory: ControllerService;
-
-export function controllerServiceFactory(store?: { [className: string]: ControllerInfo }): ControllerService {
+export function controllerServiceFactory(store?: { [className: string]: ControllerInfo }): ControllerServer {
 
     if (store) {
 
-        factory = new ControllerService(store)
+        factory = new ControllerServer(store)
 
         return factory
     }
 
     if (!factory) {
 
-        factory = new ControllerService({})
+        factory = new ControllerServer({})
     }
 
     return factory
 }
 
-export class ControllerService {
+export class ControllerServer {
 
     store: { [className: string]: ControllerInfo }
 
@@ -68,9 +67,11 @@ export class ControllerService {
 
         if (!controller.prototype) return
 
-        console.log(controller.constructor)
+        const constructorArgTypes = Reflect.getMetadata('design:paramtypes', controller);
 
-        this.store[className].controller = new controller()
+        const args = constructorArgTypes?.map((i:any) => { return new i() }) || []
+
+        this.store[className].controller = new controller(...args)
     }
 
     registerPathMethodToController({ className, controller, httpVerb, functionName, path = '/' }: PathMethodToControllerParams) {
@@ -128,7 +129,7 @@ export class ControllerService {
 
     getEndpoints(controllerName: string): { path: string, fn: Function, httpVerb: string }[] {
 
-        let result: any = ControllerService.getControllers(Object.entries(this.store).filter(i => i[0] === controllerName))
+        let result: any = ControllerServer.getControllers(Object.entries(this.store).filter(i => i[0] === controllerName))
 
         result = [].concat.apply([], result)
 

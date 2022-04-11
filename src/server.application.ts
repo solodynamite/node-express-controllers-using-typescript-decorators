@@ -1,14 +1,14 @@
 import fs from 'fs'
 import path from 'path'
-import { controllerServiceFactory } from './ControllerService';
+import { controllerServiceFactory } from './server.controller';
 import express from 'express'
-import EventService from './EventService';
-import LogService from './LogService'
-import enforceTokenAuth from '../middleware/enforceTokenAuth';
+import EventService from './services/EventService';
+import LogService from './services/LogService'
+import enforceTokenAuth from './middleware/enforceTokenAuth';
 
 const { NODE_ENV } = process.env
 
-export module ApplicationService {
+export module ApplicationServer {
 
     export function start(port: string | number, sourceDir: string) {
 

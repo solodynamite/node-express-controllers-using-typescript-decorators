@@ -1,17 +1,16 @@
-import { controller, get, post, rules } from "../middleware/decorators"
+import { controller, get, post } from "../middleware/decorators"
 import { HelloService } from "../services/HelloService";
+import { SayService } from "../services/SayService";
 
 @controller()
 export class HomeController {
 
-    constructor(private readonly helloService: HelloService) {
-        // this.helloService = new HelloService()
-    }
+    constructor(private helloService: HelloService, private sayService: SayService) {}
 
     @get()
     async home() {
 
-        const message = this.helloService.sayHello()
+        const message = this.helloService.sayHello() + this.sayService.saySomething()
 
         return { message }
     }

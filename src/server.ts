@@ -1,12 +1,12 @@
 import 'dotenv/config'
-import { ApplicationService } from './services/ApplicationService'
+import { ApplicationServer } from './server.application'
 import EventService from './services/EventService'
 import { Request, Response, NextFunction } from 'express'
 
 const { NODE_ENV, TOKEN_KEY } = process.env
 const port = process.env.PORT || 3000
 
-const server = ApplicationService.start(port, './dist/controllers');
+const server = ApplicationServer.start(port, './dist/controllers');
 
 server
 
