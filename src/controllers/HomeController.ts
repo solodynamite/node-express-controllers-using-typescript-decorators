@@ -1,19 +1,19 @@
 import { controller, get, post, rules } from "../middleware/decorators"
-import repeat_passwords_must_match from "../services/rules/repeat_passwords_must_match"
-import RuleViolationException from '../types/RuleViolationException'
+import { HelloService } from "../services/HelloService";
 
 @controller()
 export class HomeController {
 
+    constructor(private readonly helloService: HelloService) {
+        // this.helloService = new HelloService()
+    }
+
     @get()
-    @rules(repeat_passwords_must_match)
     async home() {
 
-        // throw new RuleViolationException ([
+        const message = this.helloService.sayHello()
 
-        //      { fieldName: 'firstName', message: 'Required'}
-        // ])
-        return { message: 'Hello world!'}
+        return { message }
     }
 
     @get('/say-hello/:firstName')

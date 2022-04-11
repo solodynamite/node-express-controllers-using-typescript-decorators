@@ -3,54 +3,47 @@ import { ExpressParams } from "./params";
 
 const ctrlSvcFactory = controllerServiceFactory()
 
-function registerPathMethodToControllerServiceFactory(httpMethod: string, target: any, functionName: string, funcDescriptor: PropertyDescriptor, path: string) {
+function registerPathMethodToControllerServiceFactory(httpVerb: string, controller: any, functionName: string, funcDescriptor: PropertyDescriptor, path: string) {
 
-    const { name: className } = target.constructor;
+    const { name: className } = controller.constructor;
 
-    ctrlSvcFactory.registerPathMethodToController({ className, httpMethod, functionName, func: funcDescriptor.value, path });
-}
-
-function registerRulesToControllerServiceFactory(target: any, functionName: string, funcDescriptor: PropertyDescriptor, path: string) {
-
-    const { name: className } = target.constructor;
-
-    // ctrlSvcFactory.registerRulesToController({ className, functionName, func: funcDescriptor.value, path });
+    ctrlSvcFactory.registerPathMethodToController({ className, controller, httpVerb, functionName, path });
 }
 
 export function controller(path: string = '/') {
 
-    return function (target: Function) {
+    return function (controller: any) {
 
-        const { name: className } = target;
+        const { name: className } = controller;
 
-        ctrlSvcFactory.registerController(className, path)
+        ctrlSvcFactory.registerController(className, path, controller)
     };
 }
 
-export const get = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
+export const get = (path: string = '/') => (controller: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
 
-    registerPathMethodToControllerServiceFactory('get', target, functionName, funcDescriptor, path);
-
-    return funcDescriptor;
-}
-
-export const post = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
-
-    registerPathMethodToControllerServiceFactory('post', target, functionName, funcDescriptor, path);
+    registerPathMethodToControllerServiceFactory('get', controller, functionName, funcDescriptor, path);
 
     return funcDescriptor;
 }
 
-export const put = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
+export const post = (path: string = '/') => (controller: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
 
-    registerPathMethodToControllerServiceFactory('put', target, functionName, funcDescriptor, path);
+    registerPathMethodToControllerServiceFactory('post', controller, functionName, funcDescriptor, path);
 
     return funcDescriptor;
 }
 
-export const del = (path: string = '/') => (target: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
+export const put = (path: string = '/') => (controller: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
 
-    registerPathMethodToControllerServiceFactory('delete', target, functionName, funcDescriptor, path);
+    registerPathMethodToControllerServiceFactory('put', controller, functionName, funcDescriptor, path);
+
+    return funcDescriptor;
+}
+
+export const del = (path: string = '/') => (controller: any, functionName: string, funcDescriptor: PropertyDescriptor) => {
+
+    registerPathMethodToControllerServiceFactory('delete', controller, functionName, funcDescriptor, path);
 
     return funcDescriptor;
 }

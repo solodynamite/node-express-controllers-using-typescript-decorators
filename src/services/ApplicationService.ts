@@ -43,10 +43,10 @@ export module ApplicationService {
 
                 const ctlName = (<any>controller).name;
 
-                for (let { path, fn, httpMethod }  of controllerServiceFactory().getEndpoints(ctlName)) {
+                for (let { path, fn, httpVerb }  of controllerServiceFactory().getEndpoints(ctlName)) {
 
                     // this is where endpoint calls are invoked at run-time
-                    _server[httpMethod](path, fn);
+                    _server[httpVerb](path, fn);
                 }
             }
         }

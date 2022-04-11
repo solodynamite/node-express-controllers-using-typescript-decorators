@@ -2,32 +2,34 @@ import { toSafePath, cleanPath } from './Utils'
 import { Request, Response, NextFunction } from 'express'
 import RuleViolationException from '../types/RuleViolationException'
 
-class ControllerItem {
+class ControllerInfo {
 
     public path?: string
-    public httpMethodPaths: ControllerHttpMethodPath[] = []
+    public httpVerbPaths: ControllerHttpMethodPath[] = []
+    public controller?: any
 }
 
 class ControllerHttpMethodPath {
 
     public path?: string
-    public httpMethod!: string
+    public httpVerb!: string
     public functionName!: string
-    public fn!: Function
 }
 
 class PathMethodToControllerParams {
 
     public className!: string
-    public httpMethod!: string
+    public httpVerb!: string
     public functionName!: string
-    public func!: Function
     public path?: string
+    public controller: any
 }
+
+export interface IController { }
 
 let factory: ControllerService;
 
-export function controllerServiceFactory(store?: { [className: string]: ControllerItem }): ControllerService {
+export function controllerServiceFactory(store?: { [className: string]: ControllerInfo }): ControllerService {
 
     if (store) {
 
@@ -46,55 +48,50 @@ export function controllerServiceFactory(store?: { [className: string]: Controll
 
 export class ControllerService {
 
-    store: { [className: string]: ControllerItem }
+    store: { [className: string]: ControllerInfo }
 
-    constructor(store: { [className: string]: ControllerItem }) {
+    constructor(store: { [className: string]: ControllerInfo }) {
 
         this.store = store
     }
 
-    registerController(className: string, path: string = '/') {
+    registerController(className: string, path: string = '/', controller: any) {
 
         path = cleanPath(path)
 
         if (!this.store[className]) {
 
-            return this.store[className] = { path, httpMethodPaths: [] }
+            this.store[className] = { path, httpVerbPaths: [] }
         }
 
-        this.store[className].path = path;
+        this.store[className].path = path
+
+        if (!controller.prototype) return
+
+        console.log(controller.constructor)
+
+        this.store[className].controller = new controller()
     }
 
-    registerRulesToController({ className, httpMethod, functionName, func: fn, path = '/' }: PathMethodToControllerParams) {
+    registerPathMethodToController({ className, controller, httpVerb, functionName, path = '/' }: PathMethodToControllerParams) {
 
-        this.registerController(className, path)
+        this.registerController(className, path, controller)
 
-        this.registerPathMethodToController({ className, httpMethod, functionName, func: fn, path })
+        if (this.store[className].httpVerbPaths.some(i => i.path === path && i.httpVerb === httpVerb) === false) {
 
-        const targetMethod = this.store[className].httpMethodPaths.find(i => i.path === path && i.httpMethod === httpMethod)
-
-        debugger
-    }
-
-    registerPathMethodToController({ className, httpMethod, functionName, func: fn, path = '/' }: PathMethodToControllerParams) {
-
-        this.registerController(className, path)
-
-        if (this.store[className].httpMethodPaths.some(i => i.path === path && i.httpMethod === httpMethod) === false) {
-
-            this.store[className].httpMethodPaths.push({ path, httpMethod, functionName, fn: fn })
+            this.store[className].httpVerbPaths.push({ path, httpVerb, functionName })
         }
     }
 
-    private static getControllers(source: Array<[string, ControllerItem]>) {
+    private static getControllers(source: Array<[string, ControllerInfo]>) {
 
         return source.map(entry => {
 
-            let { path, httpMethodPaths } = entry[1]
+            let { path, httpVerbPaths, controller } = entry[1]
 
-            const result = Object.values(httpMethodPaths || []).map((item: any) => {
+            const result = Object.values(httpVerbPaths || []).map((item: any) => {
 
-                const { httpMethod, path: _path, fn } = item
+                const { httpVerb, path: _path, functionName } = item
 
                 return {
 
@@ -104,7 +101,7 @@ export class ControllerService {
 
                         try {
 
-                            const result = await fn({ ...params, ...query, ...body })
+                            const result = await controller[functionName]({ ...params, ...query, ...body })
 
                             if (!result) return;
 
@@ -121,7 +118,7 @@ export class ControllerService {
                         }
                     },
 
-                    httpMethod
+                    httpVerb
                 }
             })
 
@@ -129,7 +126,7 @@ export class ControllerService {
         })
     }
 
-    getEndpoints(controllerName: string): { path: string, fn: Function, httpMethod: string }[] {
+    getEndpoints(controllerName: string): { path: string, fn: Function, httpVerb: string }[] {
 
         let result: any = ControllerService.getControllers(Object.entries(this.store).filter(i => i[0] === controllerName))
 
@@ -163,11 +160,11 @@ export class ControllerService {
 
             const controllerItem = item[1]
 
-            const endpointInfos = controllerItem.httpMethodPaths.map(({ path, httpMethod, functionName }) => { return { path, httpMethod, functionName } })
+            const endpointInfos = controllerItem.httpVerbPaths.map(({ path, httpVerb, functionName }) => { return { path, httpVerb, functionName } })
 
             endpointInfos.forEach(i => {
 
-                const _ = endpointInfos.filter(x => i.httpMethod === x.httpMethod && i.path === x.path && i.functionName !== x.functionName)[0]
+                const _ = endpointInfos.filter(x => i.httpVerb === x.httpVerb && i.path === x.path && i.functionName !== x.functionName)[0]
 
                 if (_)
 
