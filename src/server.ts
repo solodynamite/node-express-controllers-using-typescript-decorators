@@ -1,18 +1,68 @@
-import 'dotenv/config'
-import { ApplicationServer } from './server.application'
-import EventService from './services/EventService'
+import { controllerServiceFactory } from './server.controller';
 import { Request, Response, NextFunction } from 'express'
+import LogService from './services/LogService'
+import express from 'express'
+import 'dotenv/config'
+import path from 'path'
+import fs from 'fs'
 
 const { NODE_ENV, TOKEN_KEY } = process.env
 const port = process.env.PORT || 3000
+const sourceDir = './dist/controllers'
 
-const server = ApplicationServer.start(port, './dist/controllers');
+const server: any = express()
+
+function recurseAndRegisterControllers(dir: string): void {
+
+    for (var item of fs.readdirSync(dir).filter(i => path.extname(i).toLowerCase() !== '.map')) {
+
+        const p = path.join(dir, item);
+
+        if (fs.lstatSync(p).isDirectory()) {
+
+            return recurseAndRegisterControllers(p);
+        }
+
+        if (!path.extname(p)) { return; }
+
+        const fileName = p.replace(/\\/g, '/');
+
+        const controller = require(path.resolve(fileName));
+
+        registerControllerToExpressEndpoints(controller);
+    }
+
+    controllerServiceFactory().validateAndClear()
+}
+
+function registerControllerToExpressEndpoints(controllerDir: any) {
+
+    for (let controller of Object.values(controllerDir)) {
+
+        const ctlName = (<any>controller).name;
+
+        for (let { path, fn, httpVerb } of controllerServiceFactory().getEndpoints(ctlName)) {
+
+            // this is where endpoint calls are invoked at run-time
+            server[httpVerb](path, fn);
+        }
+    }
+}
+
+server.use(express.json())
+
+if (NODE_ENV === 'development') {
+
+    server.use(LogService);
+}
+
+recurseAndRegisterControllers(sourceDir)
 
 server
 
     .use((request: Request, response: Response, next: NextFunction) => {
 
-        const headers: { [header:string]: string | undefined } = {
+        const headers: { [header: string]: string | undefined } = {
 
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE",
@@ -67,33 +117,33 @@ server
         response.status(status || 500).send(packet);
     })
 
+    .listen(port, () => {
 
+        if (process.env.NODE_ENV !== 'production') {
 
-EventService.subscribe('server-init', () => {
+            const items = (() => {
 
-    if (process.env.NODE_ENV !== 'production') {
+                const result: any = {};
 
-        const items = (() => {
+                [
+                    'NODE_ENV',
+                    'BASE_URL',
+                    'TOKEN_KEY',
+                    'DB_HOST',
+                    'DISABLE_EMAIL',
+                    'TASK_SCHEDULER_ENABLED'
+                ]
+                    .forEach(i => {
 
-            const result: any = {};
+                        result[i] = process.env[i]
+                    })
 
-            [
-                'NODE_ENV',
-                'BASE_URL',
-                'TOKEN_KEY',
-                'DB_HOST',
-                'DISABLE_EMAIL',
-                'TASK_SCHEDULER_ENABLED'
-            ]
-                .forEach(i => {
+                return result
 
-                    result[i] = process.env[i]
-                })
+            })()
 
-            return result
+            console.table(items)
+        }
 
-        })()
-
-        console.table(items)
-    }
-})
+        console.log(`server running at port ${port}`)
+    })
