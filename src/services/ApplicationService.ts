@@ -39,13 +39,11 @@ export module ApplicationService {
 
         function registerControllerToExpressEndpoints(controllerDir: any) {
 
-            for (let item of Object.values(controllerDir)) {
+            for (let controller of Object.values(controllerDir)) {
 
-                const ctlName = (<any>item).name;
+                const ctlName = (<any>controller).name;
 
-                for (let x  of controllerServiceFactory().getEndpoints(ctlName)) {
-
-                    const { path, fn, httpMethod } = x
+                for (let { path, fn, httpMethod }  of controllerServiceFactory().getEndpoints(ctlName)) {
 
                     // this is where endpoint calls are invoked at run-time
                     _server[httpMethod](path, fn);

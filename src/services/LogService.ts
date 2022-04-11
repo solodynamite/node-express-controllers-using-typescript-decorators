@@ -1,6 +1,8 @@
-import morgan from 'morgan'
+import morgan, { token } from 'morgan'
 
 export default morgan((tokens: any, request: any, response: any) => {
+
+    const status = parseInt(tokens.status(request, response))
 
     const i = [
 
@@ -8,7 +10,7 @@ export default morgan((tokens: any, request: any, response: any) => {
 
         request.get('host') + tokens.url(request, response),
 
-        tokens.status(request, response),
+        status,
 
         tokens.res(request, response, 'content-length'), '-',
 
@@ -16,7 +18,9 @@ export default morgan((tokens: any, request: any, response: any) => {
 
     ].join(' ');
 
-    console.log(i);
+    const fn = status >= 200 && status <= 299 ? 'log' : 'error'
+
+    console[fn](i);
 
     return i;
 })
