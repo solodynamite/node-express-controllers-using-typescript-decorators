@@ -1,12 +1,12 @@
-import { controllerServiceFactory } from "../server.controller";
+import { controllerFactory } from "../server.controller";
 
-const ctrlSvcFactory = controllerServiceFactory()
+const ctlrFactory = controllerFactory()
 
 function registerPathMethodToControllerServiceFactory(httpVerb: string, controller: any, functionName: string, funcDescriptor: PropertyDescriptor, path: string) {
 
     const { name: className } = controller.constructor;
 
-    ctrlSvcFactory.registerPathMethodToController({ className, controller, httpVerb, functionName, path });
+    ctlrFactory.registerPathMethodToController({ className, controller, httpVerb, functionName, path });
 }
 
 export function controller(path: string = '/') {
@@ -15,7 +15,7 @@ export function controller(path: string = '/') {
 
         const { name: className } = controller;
 
-        ctrlSvcFactory.registerController(className, path, controller)
+        ctlrFactory.registerController(className, path, controller)
     };
 }
 

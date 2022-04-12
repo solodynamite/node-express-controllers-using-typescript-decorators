@@ -6,15 +6,15 @@ import RuleViolationException from './types/RuleViolationException'
 class ControllerInfo {
 
     public path?: string
-    public httpVerbPaths: ControllerHttpMethodPath[] = []
+    public httpVerbPaths: ControllerHttpVerbPath[] = []
     public controller?: any
 }
 
-class ControllerHttpMethodPath {
+type ControllerHttpVerbPath = {
 
-    public path?: string
-    public httpVerb!: string
-    public functionName!: string
+    path: string,
+    httpVerb: string,
+    functionName: string,
 }
 
 class PathMethodToControllerParams {
@@ -26,26 +26,26 @@ class PathMethodToControllerParams {
     public controller: any
 }
 
-let factory: ControllerServer;
+let factory: ControllerFactory;
 
-export function controllerServiceFactory(store?: { [className: string]: ControllerInfo }): ControllerServer {
+export function controllerFactory(store?: { [className: string]: ControllerInfo }): ControllerFactory {
 
     if (store) {
 
-        factory = new ControllerServer(store)
+        factory = new ControllerFactory(store)
 
         return factory
     }
 
     if (!factory) {
 
-        factory = new ControllerServer({})
+        factory = new ControllerFactory({})
     }
 
     return factory
 }
 
-export class ControllerServer {
+export class ControllerFactory {
 
     store: { [className: string]: ControllerInfo }
 
@@ -90,7 +90,7 @@ export class ControllerServer {
 
             let { path, httpVerbPaths, controller } = entry[1]
 
-            const items = Object.values(httpVerbPaths || []).map((item: any) => {
+            const endpoints = Object.values(httpVerbPaths).map((item: any) => {
 
                 const { httpVerb, path: _path, functionName } = item
                 
@@ -123,7 +123,7 @@ export class ControllerServer {
                 }
             })
 
-            return items
+            return endpoints
         })
 
         return result
@@ -131,7 +131,7 @@ export class ControllerServer {
 
     getEndpoints(controllerName: string): { path: string, controllerFunction: Function, httpVerb: string }[] {
 
-        let result: any = ControllerServer.getControllers(Object.entries(this.store).filter(i => i[0] === controllerName))
+        let result: any = ControllerFactory.getControllers(Object.entries(this.store).filter(i => i[0] === controllerName))
 
         result = [].concat.apply([], result)
 

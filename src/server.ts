@@ -1,4 +1,4 @@
-import { controllerServiceFactory } from './server.controller';
+import { controllerFactory } from './server.controller';
 import { Request, Response, NextFunction } from 'express'
 import LogService from './services/LogService'
 import express from 'express'
@@ -32,7 +32,7 @@ function recurseAndRegisterControllers(dir: string): void {
         registerControllerToExpressEndpoints(controller);
     }
 
-    controllerServiceFactory().validateAndClear()
+    controllerFactory().validateAndClear()
 }
 
 function registerControllerToExpressEndpoints(controllerDir: any) {
@@ -41,7 +41,7 @@ function registerControllerToExpressEndpoints(controllerDir: any) {
 
         const ctlName = (<any>controller).name;
 
-        for (let { path, controllerFunction, httpVerb } of controllerServiceFactory().getEndpoints(ctlName)) {
+        for (let { path, controllerFunction, httpVerb } of controllerFactory().getEndpoints(ctlName)) {
 
             // this is where endpoint calls are invoked at run-time
             server[httpVerb](path, controllerFunction);
