@@ -41,10 +41,10 @@ function registerControllerToExpressEndpoints(controllerDir: any) {
 
         const ctlName = (<any>controller).name;
 
-        for (let { path, fn, httpVerb } of controllerServiceFactory().getEndpoints(ctlName)) {
+        for (let { path, controllerFunction, httpVerb } of controllerServiceFactory().getEndpoints(ctlName)) {
 
             // this is where endpoint calls are invoked at run-time
-            server[httpVerb](path, fn);
+            server[httpVerb](path, controllerFunction);
         }
     }
 }

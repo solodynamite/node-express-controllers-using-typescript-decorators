@@ -69,7 +69,7 @@ export class ControllerServer {
 
         const constructorArgTypes = Reflect.getMetadata('design:paramtypes', controller);
 
-        const args = constructorArgTypes?.map((i:any) => { return new i() }) || []
+        const args = constructorArgTypes?.map((i: any) => { return new i() }) || []
 
         this.store[className].controller = new controller(...args)
     }
@@ -86,19 +86,21 @@ export class ControllerServer {
 
     private static getControllers(source: Array<[string, ControllerInfo]>) {
 
-        return source.map(entry => {
+        const result = source.map(entry => {
 
             let { path, httpVerbPaths, controller } = entry[1]
 
-            const result = Object.values(httpVerbPaths || []).map((item: any) => {
+            const items = Object.values(httpVerbPaths || []).map((item: any) => {
 
                 const { httpVerb, path: _path, functionName } = item
-
+                
                 return {
-
+                    
                     path: toSafePath([path, _path]),
+                    
+                    httpVerb,
 
-                    fn: async ({ params, query, body }: Request, response: Response, next: NextFunction) => {
+                    controllerFunction: async ({ params, query, body }: Request, response: Response, next: NextFunction) => {
 
                         try {
 
@@ -117,17 +119,17 @@ export class ControllerServer {
 
                             response.status(500).send({ message: (<any>err).message })
                         }
-                    },
-
-                    httpVerb
+                    }
                 }
             })
 
-            return result
+            return items
         })
+
+        return result
     }
 
-    getEndpoints(controllerName: string): { path: string, fn: Function, httpVerb: string }[] {
+    getEndpoints(controllerName: string): { path: string, controllerFunction: Function, httpVerb: string }[] {
 
         let result: any = ControllerServer.getControllers(Object.entries(this.store).filter(i => i[0] === controllerName))
 
